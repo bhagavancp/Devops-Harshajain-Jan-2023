@@ -1,0 +1,22 @@
+Kubernetes Installation using kops
+	1. Install and cofigure AWS CLI 
+	
+	2. Install kops 
+		https://kops.sigs.k8s.io/getting_started/install/
+	
+	3. create a s3 bucket to save all the cluster-info (etcd like)
+		aws s3api create-bucket --bucket <bucket_name> --create-bucket-configuration LocationConstraint=<aws_region>
+	
+	4. Create cluster using kops 
+		kops create cluster --yes --state=s3://kops-etcd-98765212245asd324 --zones=ap-south-1a --node-count=2 --node-size=t2.micro --master-size=t2.medium --name=mycluster.k8s.local	
+
+	5. Setup kubectl 
+		5a. set the store env variable 
+			export KOPS_STATE_STORE='s3://kops-etcd-98765212245asd324'
+		5b. set kubectl context to cluster	
+			kubectl config set-context <cluster_name>
+			kubectl config set-context mycluster.k8s.local
+
+
+To delete cluster in kops 
+	kops delete cluster <cluster_name> --yes

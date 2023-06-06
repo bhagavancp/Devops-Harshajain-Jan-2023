@@ -1,0 +1,57 @@
+
+pipeline {
+		environment { 
+		  registry = "qprofile/qprofile_user" 
+		  registryCredential = 'qp_docker_hub' 
+		  dockerImage = '' 
+		}
+	agent any
+	
+	triggers {
+			pollSCM '* * * * *'
+		}
+
+		stages {
+					stage("POLL SCM"){
+						steps {
+							 checkout scm: [$class: 'GitSCM', userRemoteConfigs: [[url: 'https://github.com/qprofiles/Frontend.git', credentialsId: 'QP_GITHUB']], branches: [[name: 'refs/heads/main']]], poll: true
+						}
+					}	
+					
+					stage('BUILD IMAGE') { 
+						 steps { 
+							 sh 'pwd'	
+							 sh 'ls -lrt'	
+							 script { 
+								 dockerImage = docker.build registry + ":frontend_$BUILD_NUMBER" 
+							 }
+						} 
+					}
+					
+					stage('PUSH HUB') { 
+						 steps { 
+							 script { 
+								 docker.withRegistry( '', registryCredential ) { 
+									 dockerImage.push() 
+									}
+							}		
+						} 
+					}
+					
+					
+					stage('CLEAN') { 
+						 steps { 
+							 sh "docker rmi $registry:frontend_$BUILD_NUMBER" 
+						 }
+					} 
+					
+					stage('DEPLOY IMAGE') {
+						steps {
+						 sshagent (credentials: ['qpfb_ssh']) {
+								sh "ssh -o StrictHostKeyChecking=no -l qprofiles1 34.122.133.104 deploy qprofile/qprofile_user frontend_$BUILD_NUMBER qprofiles_frontend"
+							  }
+						}
+					}
+					
+			}
+}

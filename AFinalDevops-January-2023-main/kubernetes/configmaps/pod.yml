@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-ip-app
+spec:
+  containers:
+  - name: ip-app
+    image: harshajain/ip-app:1
+    ports:
+    - containerPort: 80
+    env:
+    - name: ENVIRONMENT
+      valueFrom:
+        configMapKeyRef:
+          name: my-configmap
+          key: env
+    - name: APP_NAME
+      valueFrom:
+        configMapKeyRef:
+          name: my-configmap
+          key: app
+

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-memory-limit-with-high-priority
+  namespace: default
+spec:
+  containers:
+  - name: my-ubuntu
+    image: ubuntu
+    command: ["/bin/sh"]
+    args: ["-c", "while true; do echo hello; sleep 10; done"]
+    resources:
+      requests:
+        memory: "600Mi"
+        cpu: "500m"
+      limits:
+        memory: "600Mi"
+        cpu: "500m"
+  priorityClassName: high

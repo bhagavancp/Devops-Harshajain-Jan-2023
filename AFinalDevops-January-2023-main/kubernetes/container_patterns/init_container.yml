@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-ip-app-init-container
+spec:
+  initContainers:
+  - name: busybox
+    image: busybox
+    command: ["/bin/sh"]
+    args: ["-c", "echo '<html><h1>Init conatiner</h1></html>' >> /shareDir/index.html"]
+    volumeMounts:
+    - name: sharedirectory
+      mountPath: "/shareDir"
+
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: sharedirectory
+      mountPath: "/usr/share/nginx/html"
+
+  volumes:
+  - name: sharedirectory
+    emptyDir: {}
+

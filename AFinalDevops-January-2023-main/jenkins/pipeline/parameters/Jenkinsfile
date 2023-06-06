@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'NAME', description: 'Please tell me your name?')
+ 
+        text(name: 'DESCRIPTION', description: 'Describe about the job details')
+ 
+        booleanParam(name: 'SKIP_TEST', description: 'Want to skip running Test cases?')
+ 
+        choice(name: 'BRANCH', choices: ['master', 'dev', 'feature', 'hotfix'], description: 'Choose branch')
+ 
+        password(name: 'SERVER_PWD', description: 'Enter password')
+    }
+    stages {
+        stage('Printing Parameters') {
+            steps {
+                echo "NAME ${params.NAME}"
+ 
+                echo "DESCRIPTION: ${params.DESC}"
+ 
+                echo "SKIP_TEST: ${params.SKIP_TEST}"
+ 
+                echo "BRANCH: ${params.BRANCH}"
+ 
+                echo "SERVER_PWD: ${params.SERVER_PWD}"
+            }
+        }
+    }
+}

@@ -1,0 +1,30 @@
+version: "2.4"
+services:
+  web:
+    build: .
+    ports:
+     - "8000:5000"
+    volumes:
+     - .:/code
+    networks:
+      - front-tier
+      - back-tier
+  redis:
+    image: redis
+    volumes:
+      - redis-data:/var/lib/redis
+    networks:
+      - back-tier
+volumes:
+  redis-data:
+    driver: local
+networks:
+  front-tier:
+    driver: bridge
+  back-tier:
+    driver: bridge
+
+
+#docker-compose build  
+#docker-compose up     
+#docker-compose down  

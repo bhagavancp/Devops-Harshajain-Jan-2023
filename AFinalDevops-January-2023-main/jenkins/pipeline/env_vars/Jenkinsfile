@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+    environment { 
+        DEPLOY_TO = 'production'
+    }
+    stages {
+        stage('Initialization') {
+			environment { 
+                   JOB_TIME = sh (returnStdout: true, script: "date '+%A %W %Y %X'").trim()
+            }
+            steps {
+                echo "${DEPLOY_TO}"
+				echo "$JOB_TIME"
+            }
+        }
+    }
+ }

@@ -1,0 +1,13 @@
+FROM jenkins/jenkins:lts
+USER root
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y sudo libltdl-dev libnss3 \
+    && rm -rf /var/lib/apt/lists/*
+RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
+USER jenkins
+
+
+docker build -t docIndoc .
+docker run --name jenkins -d -p 8080:8080 -p 50000:50000 -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):$(which docker) -v /home/qprofiles1/jenkins_home:/var/jenkins_home jenkins_full:latest
+docker exec -it jenkins /bin/bash
